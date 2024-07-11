@@ -6,17 +6,6 @@ on:
       - main  # Adjust the branch name as needed
 
 jobs:
-  check-connectivity:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check Kubernetes API connectivity with curl
-        run: |
-          curl -v http://192.168.49.2:8443
-          
-      - name: Check Kubernetes API connectivity with telnet
-        run: |
-          telnet localhost 8080      
   deploy:
     runs-on: ubuntu-latest
 
@@ -24,12 +13,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up kubectl
+      - name: Set up kubectl with GitHub Secret
         run: |
-          mkdir -p ~/.kube
-          echo "$KUBE_CONFIG_DATA" > ~/.kube/config
-          kubectl version  # Check kubectl version for debugging
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
+          chmod 777 $HOME/.kube/config
 
+      - name: Verify kubectl configuration
+        run: |
+          kubectl config view
+  
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f testpod.yml
