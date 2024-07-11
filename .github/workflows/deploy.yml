@@ -33,4 +33,4 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}  # Ensure this secret is set in your repository settings
         run: |
-          kubectl apply -f testpod.yml  --validate=false
+          kubectl apply -f testpod.yml  
