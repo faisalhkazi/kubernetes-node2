@@ -22,6 +22,12 @@ jobs:
       - name: Verify kubectl configuration
         run: |
           kubectl config view
+
+      - name: Copy Minikube Certificates
+        run: |
+          cp /home/kube/.minikube/profiles/minikube/client.crt $HOME/.kube/client.crt
+          cp /home/kube/.minikube/profiles/minikube/client.key $HOME/.kube/client.key
+          cp /home/kube/.minikube/ca.crt $HOME/.kube/ca.crt
   
       - name: Deploy to Kubernetes
         run: |
