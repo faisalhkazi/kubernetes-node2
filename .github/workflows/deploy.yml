@@ -1,0 +1,25 @@
+name: Kubernetes Deployment
+
+on:
+  push:
+    branches:
+      - main  # Adjust the branch name as needed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG_DATA" > ~/.kube/config
+          kubectl version  # Check kubectl version for debugging
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f testpod.yml
+          # Add any other kubectl commands as needed
