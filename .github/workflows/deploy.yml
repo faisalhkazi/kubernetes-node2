@@ -24,6 +24,10 @@ jobs:
         run: |
           kubectl config view
 
+      - name: Debug kubeconfig
+        run: |
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
+          cat kubeconfig  # Output the kubeconfig contents for debugging purposes
 
       - name: Deploy to Kubernetes
         env:
