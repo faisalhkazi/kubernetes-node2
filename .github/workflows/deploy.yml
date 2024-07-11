@@ -25,10 +25,17 @@ jobs:
 
       - name: Copy Minikube Certificates
         run: |
+          # Replace with actual path if different
           cp /home/kube/.minikube/profiles/minikube/client.crt $HOME/.kube/client.crt
           cp /home/kube/.minikube/profiles/minikube/client.key $HOME/.kube/client.key
-          cp /home/kube/.minikube/ca.crt $HOME/.kube/ca.crt
-  
+          cp /home/kube/.minikube/profiles/minikube/ca.crt $HOME/.kube/ca.crt
+
+      - name: Ensure file permissions
+        run: |
+          chmod 644 $HOME/.kube/client.crt
+          chmod 644 $HOME/.kube/client.key
+          chmod 644 $HOME/.kube/ca.crt
+
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f testpod.yml
