@@ -6,6 +6,17 @@ on:
       - main  # Adjust the branch name as needed
 
 jobs:
+  check-connectivity:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check Kubernetes API connectivity with curl
+        run: |
+          curl -v http://192.168.49.2:8080
+          
+      - name: Check Kubernetes API connectivity with telnet
+        run: |
+          telnet localhost 8080      
   deploy:
     runs-on: ubuntu-latest
 
