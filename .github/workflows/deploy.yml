@@ -13,30 +13,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up kubectl with GitHub Secret
+      - name: Kubernetes Login
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}  # This should be the base64-encoded kubeconfig file
         run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
-          chmod 777 $HOME/.kube/config
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
+          export KUBECONFIG=$PWD/kubeconfig
 
       - name: Verify kubectl configuration
         run: |
           kubectl config view
 
-      - name: Copy Minikube Certificates
-        run: |
-          # Replace with actual path if different
-          cp /home/kube/.minikube/profiles/minikube/client.crt $HOME/.kube/client.crt
-          cp /home/kube/.minikube/profiles/minikube/client.key $HOME/.kube/client.key
-          cp /home/kube/.minikube/profiles/minikube/ca.crt $HOME/.kube/ca.crt
-
-      - name: Ensure file permissions
-        run: |
-          chmod 644 $HOME/.kube/client.crt
-          chmod 644 $HOME/.kube/client.key
-          chmod 644 $HOME/.kube/ca.crt
 
       - name: Deploy to Kubernetes
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}  # Ensure this secret is set in your repository settings
         run: |
-          kubectl apply -f testpod.yml
-          # Add any other kubectl commands as needed
+          kubectl apply -f /home/kube/testpod.yml
