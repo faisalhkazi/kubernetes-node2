@@ -13,12 +13,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Set up Minikube
         run: |
+          ssh -o StrictHostKeyChecking=no kube@192.168.1.96 'bash -s' << 'EOF'
+          # Install dependencies
+          sudo apt-get update
+          sudo apt-get install -y curl apt-transport-https
+
+          # Install Minikube
           curl -Lo minikube https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
           chmod +x minikube
           sudo mv minikube /usr/local/bin/
+
+          # Start Minikube
+          minikube start --driver=docker
+          EOF
 
       - name: Start Minikube
         run: |
