@@ -13,6 +13,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo usermod -aG docker $USER
+          newgrp docker
+
+      - name: Set up Minikube
+        run: |
+          curl -Lo minikube https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
+          chmod +x minikube
+          sudo mv minikube /usr/local/bin/
+
+      - name: Start Minikube
+        run: |
+          minikube start --driver=docker
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin/      
+
+
       - name: Kubernetes Login
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}  # This should be the base64-encoded kubeconfig file
