@@ -7,11 +7,15 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: 
+      - self-hosted
+      - label-1  
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+
 
 
       - name: Set up Minikube
@@ -31,12 +35,6 @@ jobs:
       - name: Start Minikube
         run: |
           minikube start --driver=docker
-
-      - name: Install kubectl
-        run: |
-          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-          chmod +x ./kubectl
-          sudo mv ./kubectl /usr/local/bin/      
 
 
       - name: Kubernetes Login
